@@ -1,73 +1,57 @@
-# Installation
+# Installation (Windows)
 
-#### opencv 2.4.9
+### Compiler - Visual C++
+
+- Download and install VS community edition
+- Create new project > Visual C++ and select "Install Visual C++ 2015 Tools for Windows Desktop"
+
+### CMake
+CMake is used to control the software compilation process using simple platform and compiler independent configuration files, and generate native makefiles and workspaces that can be used in the compiler environment of your choice.
+
+- Download latest Cmake installer tool from cmake.org
+- Choose add CMake to Path variable
+- Test in Console `cmake --version`
+
+
+### OpenCV 2.4.13 binaries for Visual Studio 14 2015
+
+- Download and extract source from: https://sourceforge.net/projects/opencvlibrary/files/opencv-win/
+- OpenCV 2.4.13 is ++not++ precompiled for VS14 2015! We need to compile it first.
+- Open CMake GUI and select source (C:/lib/OpenCV2413/sources) and build (C:/lib/OpenCV2413/build) Path
+- Click on `Configure` and Select "Microsoft Visual Studio 2015 x64"
+- Click on `Generate` - Microsoft Visual Studio project gets generated
+- Open `OpenCV.sln` in Visual Stduio from build path
+
+**Building OpenCV**
+
+- Select `Debug` and `RMB > Build` on `CMakeTargets > ALL_BUILD` in Project Explorer
+- Select `Release` and `RMB > Build` on `CMakeTargets > ALL_BUILD` in Project Explorer
+- OpenCV ist now built for/with Visual Studio 14
+
+
+**Combining includes/libraries**
+- Select `Debug` and `RMB > Build` on `CMakeTargets > INSTALL` in Project Explorer
+- Select `Release` and `RMB > Build` on `CMakeTargets > INSTALL` in Project Explorer
+
+**Set Environment/PATH Variable**
+For CMake to find OpenCV
 
 ```bash
-# dependencies
-sudo apt-get -y install libopencv-dev build-essential git-core autoconf libtool cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
-
-sudo apt-get -qq install checkinstall yasm 
-
-
-# video I/O
-sudo apt-get install libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev yasm libopencore-amrnb-dev libopencore-amrwb-dev libv4l-dev libxine2-dev
-
-# Parallelism and linear algebra libraries:
-sudo apt-get install libtbb-dev libeigen3-dev
+setx -m OPENCV_DIR "C:\lib\OpenCV2413\install\"
 ```
 
-
-#### ARToolkit
-
-##### Download and build from source
-
+Set PATH variable, so linker finds libraries (-m for all users on machine).
 ```bash
-# Dependencies:
-$ sudo apt-get install clang
-# CV dependencies for calib_camera
-$ sudo apt-get install libopencv-dev
-# Toolkit
-$ cd ~/installations
-$ git clone https://github.com/artoolkit/artoolkit5.git
-$ cd artoolkit5
-$ ./Configure
-$ make
-
-**Configuration**
-- First select "No" (do not compile with Clang)
-- Select "No" to skip OSG and VRML examples
-
-
-
-##### Installation
-
-**Option 1**: Install in user program directory
-```bash
-# Copy includes (header files)
-sudo cp -R ./include/AR /usr/local/include/
-# Copy libraries (libAR.a, libAR2.a, libARICP.a)
-sudo cp ./lib/*.a /usr/local/lib/
+setx -m PATH "%PATH%;C:\lib\OpenCV2413\install\x64\vc14\bin"
 ```
 
-**Option 2**: Set environment variable to the ARTolkit root
+- **restart**
 
-```bash
-# from the unpacked artoolkit5 directory run
-./share/artoolkit5-setenv
-```
-
-##### Uninstall
-
-```bash
-sudo rm -rf /usr/local/include/AR
-sudo rm /usr/local/lib/libAR*.a
-```
-
-## Build Project
-
+# Build Project
+Open command prompt and execute:
 ```bash
 mkdir build
 cd build
-cmake ..
-make
+cmake .. -G "Visual Studio 14 2015 Win64"
 ```
+
