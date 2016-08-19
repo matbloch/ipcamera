@@ -1,6 +1,5 @@
 INCLUDE_DIRECTORIES(
   .
-  utilities
 )
 
 
@@ -8,7 +7,7 @@ INCLUDE_DIRECTORIES(
 SET(COMMON_LIBS ${OpenCV_LIBS})
 
 # Add eigen (header file only)
-INCLUDE_DIRECTORIES ( "${EIGEN3_INCLUDE_DIR}" )
+# INCLUDE_DIRECTORIES ( "${EIGEN3_INCLUDE_DIR}" )
 
 IF(ARTOOLKIT5_FOUND)
 	# ARToolkit
@@ -30,7 +29,3 @@ TARGET_LINK_LIBRARIES(video_to_image
 )
 
 MESSAGE(${COMMON_LIBS})
-
-
-# build subprojects
-add_subdirectory (mapping)

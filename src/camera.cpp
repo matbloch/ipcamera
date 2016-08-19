@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     VideoCapture cap;
     // open the default camera, use something different from 0 otherwise;
     // Check VideoCapture documentation.
-    if(!cap.open(0))
+    if(!cap.open("http://192.168.1.21:8080/video?dummy=param.mjpg"))
         return 0;
     for(;;)
     {
