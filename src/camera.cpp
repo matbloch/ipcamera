@@ -247,6 +247,45 @@ void reset_cam_status() {
 	OK_NR_FRAMES = 0;
 }
 
+class peopleCounter {
+public:
+	// letzte 3 bilder:  1x verschiedene anz. = 2x gleiche anz. in 3 menschen
+	peopleCounter(int length = 3):count_(0), length_(length), thresh_(1) {};
+
+	void addCount(int nr) {
+		// add to front
+		count_.insert(count_.begin(), nr);
+		if (count_.size() > length_) {
+			// remove last elem
+			count_.pop_back();
+		}
+	};
+	bool valid() {
+		if (count_.size() < length_) {
+			// dont start from beginning
+			return false;
+		}
+		int diff_nr_people=0;
+
+		for (int i = (count_.size()-1); i > 0; i--) {
+			if (count_[i] != count_[i-1] || count_[i] == 0) {
+				diff_nr_people++;
+			}
+		}
+		if (diff_nr_people > thresh_) {
+			return false;
+		}
+	};
+
+protected:
+	int length_;
+	int thresh_;
+	std::vector<int> count_;
+
+};
+
+
+
 int main(int argc, char** argv)
 {
     VideoCapture cap;
@@ -272,6 +311,7 @@ int main(int argc, char** argv)
 
 	// load cascade
 	CascadeClassifier* cascade = load_face_haar();
+	peopleCounter* visFilter = new peopleCounter();
 
 	if (cascade == nullptr) {
 		std::cout << "Failed to load cascade..." << std::endl;
@@ -279,12 +319,17 @@ int main(int argc, char** argv)
 	}
 
 	int frame_no = 0;
+	// nr of pixels face can move (abs)
 	int face_offset = 6;
+	
 	bool has_not_moved = false;
 	bool wait_a_sec = false;
+	int nr_faces_not_moved = 0;
+	int nr_faces[3];
 
     for(;;)
     {
+		  // read frame
           cap >> frame_clr;
           if(frame_clr.empty() ) break; // end of video stream
 
@@ -294,17 +339,16 @@ int main(int argc, char** argv)
 		  //haar_detection(img_resized, cascade);
 		  detect_face_dlib(img_resized, FACELIST_prev, FACELIST_curr);
 
-
 		  wait_a_sec = false;
+
+		  visFilter->addCount(FACELIST_curr.size());
 		  // check status
-		  if (FACELIST_curr.size() == 0 
-			  || FACELIST_prev.size() != FACELIST_curr.size()
-			  ) {
+		  if (!visFilter->valid()) {
 			  std::cout << "uneven number or no faces:" << FACELIST_curr.size() << std::endl;
 			  reset_cam_status();
 		  }
 		  else {
-
+			  nr_faces_not_moved = 0;
 			  // check status
 			  for (int i = 0; i<FACELIST_curr.size(); i++) {
 				  cv::Point face_center_curr = FACELIST_curr[i];
@@ -315,21 +359,25 @@ int main(int argc, char** argv)
 					  face_center_prev = FACELIST_prev[j];
 					  // find face with same center
 					  if (
-						  std::abs(face_center_curr.x - face_center_prev.x) < face_offset &&
-						  std::abs(face_center_curr.y - face_center_prev.y)  < face_offset
+						  sqrt(exp2(std::abs(face_center_curr.x - face_center_prev.x))+
+						  exp2(std::abs(face_center_curr.y - face_center_prev.y)))  < face_offset
 						  ) {
 						  has_not_moved = true;
+						  nr_faces_not_moved++;
 						  break;
 					  }
 				  }
+				  /*
 				  if (!has_not_moved) {
+					  // ok
 					  break;
 				  } else {
 					  //std::cout << "++ a face has not moved: (" << face_center_curr.x << ", "<< face_center_curr.y << ")"<< std::endl;
 				  }
+				  */
 			  }
 
-			  if (has_not_moved == true) {
+			  if (nr_faces_not_moved >= 1) {
 				  TAKE_PICTURE = 1;
 				  OK_NR_FRAMES++;
 			  }
