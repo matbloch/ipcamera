@@ -17,7 +17,7 @@ using namespace cv;
 using namespace std;
 
 
-string streamurl = "http://192.168.1.21:8080/video?dummy=param.mjpg";
+string streamurl = "http://192.168.1.137:8080/video?dummy=param.mjpg";
 string window_name = "This is your smile :)";
 
 
@@ -318,7 +318,8 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	int frame_no = 0;
+	long int frame_no = 0;
+	long int pic_no = 0;
 	// nr of pixels face can move (abs)
 	int face_offset = 6;
 	
@@ -400,7 +401,8 @@ int main(int argc, char** argv)
 					  // save picture
 					  std::cout << "SNAAP" << std::endl;
 					  //save_image(frame_clr);
-					  cv::imwrite("../pictures/fotobox111.jpg", frame_clr);
+					  cv::imwrite("../pictures/fotobox_"+std::to_string(pic_no)+".jpg", frame_clr);
+					  pic_no++;
 					  // reset count down
 					  COUNTDOWN = 3;
 					  // wait 3 sec

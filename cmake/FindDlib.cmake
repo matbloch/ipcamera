@@ -15,7 +15,7 @@ IF (NOT DLIB_DIR)
     # $ENV{DLIB_DIR}
     # DOC "The build directory, containing Dlibconfig.cmake")  
 	FIND_PATH (DLIB_DIR Dlibconfig.cmake
-    "C:/lib/dlib-19.0/installation/lib/cmake/dlib"
+    "C:/lib/dlib-19.1/installation/lib/cmake/dlib"
     DOC "The build directory, containing Dlibconfig.cmake")
 	
 ENDIF (NOT DLIB_DIR)
